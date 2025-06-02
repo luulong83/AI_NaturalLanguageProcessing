@@ -1,7 +1,8 @@
 https://github.com/VinAIResearch/PhoBERT?tab=readme-ov-file#install2
 
 Tạo lập môi trường ảo Virtualenv Environment
-  	# cmd: python -m venv myenv
+	# py -V:3.10 -m venv myenv310
+  	# cmd: python -m venv myenv <----bỏ
   	# cmd: .\myenv\Scripts\activate
 
 Cài đặt py_vncorenlp
