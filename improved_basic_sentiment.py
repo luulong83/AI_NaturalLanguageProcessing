@@ -1,3 +1,11 @@
+"""
+Bài Mẫu Cải Tiến (Cấp Cơ Bản)
+Dưới đây là bài mẫu cải tiến cho phân loại cảm xúc đơn giản, với dữ liệu lớn hơn, chia train/test, và ánh xạ nhãn rõ ràng.
+Lưu Ý
+    Dữ liệu: Bài mẫu sử dụng 10 câu để cải thiện khả năng học của mô hình. Bạn có thể thêm dữ liệu thực tế từ bình luận mạng xã hội hoặc đánh giá sản phẩm.
+    Cải tiến tiếp theo: Nếu muốn nâng cao, thử bài mẫu trung bình hoặc nâng cao từ câu trả lời trước, bao gồm trực quan hóa và tối ưu hóa hyperparameter.
+    Sử dụng GPU: Nếu có GPU, thêm fp16=True trong TrainingArguments để tăng tốc.
+"""
 import pandas as pd
 from datasets import Dataset
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, Trainer, TrainingArguments
