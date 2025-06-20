@@ -2,6 +2,10 @@ import pandas as pd
 from transformers import MarianMTModel, MarianTokenizer
 import random
 import py_vncorenlp
+import torch
+
+# Kiểm tra thiết bị
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Khởi tạo VnCoreNLP cho từ điển đồng nghĩa
 py_vncorenlp.download_model()
@@ -21,16 +25,16 @@ def synonym_replacement(sentence):
 def back_translation(sentence):
     model_name = "Helsinki-NLP/opus-mt-vi-en"
     tokenizer_en = MarianTokenizer.from_pretrained(model_name)
-    model_en = MarianMTModel.from_pretrained(model_name)
+    model_en = MarianMTModel.from_pretrained(model_name).to(device)
     model_name = "Helsinki-NLP/opus-mt-en-vi"
     tokenizer_vi = MarianTokenizer.from_pretrained(model_name)
-    model_vi = MarianMTModel.from_pretrained(model_name)
+    model_vi = MarianMTModel.from_pretrained(model_name).to(device)
     
-    inputs = tokenizer_en(sentence, return_tensors="pt", truncation=True, max_length=128)
+    inputs = tokenizer_en(sentence, return_tensors="pt", truncation=True, max_length=128).to(device)
     translated = model_en.generate(**inputs)
     en_text = tokenizer_en.decode(translated[0], skip_special_tokens=True)
     
-    inputs = tokenizer_vi(en_text, return_tensors="pt", truncation=True, max_length=128)
+    inputs = tokenizer_vi(en_text, return_tensors="pt", truncation=True, max_length=128).to(device)
     translated = model_vi.generate(**inputs)
     return tokenizer_vi.decode(translated[0], skip_special_tokens=True)
 
@@ -49,6 +53,7 @@ def augment_data(data):
     return pd.DataFrame(augmented_data)
 
 # Áp dụng
-data = pd.read_csv("small_gpt_web/test_5k.csv")
-augmented_data = augment_data(data)
-augmented_data.to_csv("small_gpt_web/augmented_test_15k.csv", index=False)
+if __name__ == "__main__":
+    data = pd.read_csv("small_gpt_web/test_5k.csv")
+    augmented_data = augment_data(data)
+    augmented_data.to_csv("small_gpt_web/augmented_test_15k.csv", index=False)

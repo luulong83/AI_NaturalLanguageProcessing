@@ -5,6 +5,9 @@ import numpy as np
 from torch.utils.data import Dataset, DataLoader
 from sklearn.metrics import accuracy_score
 
+# Kiểm tra thiết bị
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 # Dataset tùy chỉnh
 class TextTopoDataset(Dataset):
     def __init__(self, data, topo_features, tokenizer, max_len):
@@ -68,16 +71,17 @@ def train_model(model, dataloader, optimizer, device, epochs=3):
         print(f"Epoch {epoch+1}, Loss: {total_loss / len(dataloader)}")
 
 # Áp dụng
-data = pd.read_csv("small_gpt_web/augmented_test_15k.csv")
-topo_features = np.load("small_gpt_web/topo_features.npy")  # (12, 12, 6, samples, 3)
-tokenizer = AutoTokenizer.from_pretrained("vinai/phobert-base")
-phobert = AutoModelForSequenceClassification.from_pretrained("vinai/phobert-base", num_labels=2)
-
-dataset = TextTopoDataset(data, topo_features, tokenizer, MAX_LEN)
-dataloader = DataLoader(dataset, batch_size=16, shuffle=True)
-
-model = PhoBERTTopoClassifier(phobert, topo_dim=12*12*6*3)  # topo_features flattened
-model = model.to("cuda:1")
-optimizer = torch.optim.Adam(model.parameters(), lr=2e-5)
-
-train_model(model, dataloader, optimizer, "cuda:1")
+if __name__ == "__main__":
+    data = pd.read_csv("small_gpt_web/augmented_test_15k.csv")
+    topo_features = np.load("small_gpt_web/topo_features.npy")  # (12, 12, 6, samples, 3)
+    tokenizer = AutoTokenizer.from_pretrained("vinai/phobert-base")
+    phobert = AutoModelForSequenceClassification.from_pretrained("vinai/phobert-base", num_labels=2)
+    
+    dataset = TextTopoDataset(data, topo_features, tokenizer, max_len=128)
+    dataloader = DataLoader(dataset, batch_size=16, shuffle=True)
+    
+    model = PhoBERTTopoClassifier(phobert, topo_dim=12*12*6*3)
+    model = model.to(device)
+    optimizer = torch.optim.Adam(model.parameters(), lr=2e-5)
+    
+    train_model(model, dataloader, optimizer, device)
