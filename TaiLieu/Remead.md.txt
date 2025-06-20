@@ -1,0 +1,2 @@
+Topological Deep Learning: Going Beyond Graph Data
+https://arxiv.org/pdf/2206.00606
