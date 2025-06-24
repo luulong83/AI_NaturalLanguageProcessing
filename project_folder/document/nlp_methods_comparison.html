@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>So sánh phương pháp NLP</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            font-size: 14px;
+        }
+        
+        thead {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        th, td {
+            padding: 12px 8px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+            vertical-align: top;
+        }
+        
+        th {
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 12px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        tbody tr:hover {
+            background: linear-gradient(90deg, #f8f9ff, #fff);
+            transform: translateX(5px);
+            transition: all 0.3s ease;
+        }
+        
+        .method-name {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .pros {
+            color: #27ae60;
+            font-weight: 500;
+        }
+        
+        .cons {
+            color: #e74c3c;
+            font-weight: 500;
+        }
+        
+        .difficulty {
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: bold;
+            text-align: center;
+            color: white;
+            text-transform: uppercase;
+        }
+        
+        .easy { background: #27ae60; }
+        .medium { background: #f39c12; }
+        .hard { background: #e74c3c; }
+        
+        .performance {
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: bold;
+            text-align: center;
+            color: white;
+        }
+        
+        .low { background: #95a5a6; }
+        .medium-perf { background: #3498db; }
+        .high { background: #e74c3c; }
+        
+        .code-example {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+        }
+        
+        .highlight {
+            background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        
+        .note {
+            background: #fff3cd;
+            border: 1px solid #ffeeba;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #ffc107;
+        }
+        
+        .note strong {
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 So sánh các phương pháp NLP/Text Classification</h1>
+        
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 15%">Phương pháp</th>
+                        <th style="width: 15%">Thư viện chính</th>
+                        <th style="width: 10%">Độ khó</th>
+                        <th style="width: 10%">Hiệu suất</th>
+                        <th style="width: 20%">Ưu điểm</th>
+                        <th style="width: 20%">Nhược điểm</th>
+                        <th style="width: 10%">Use Case</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="method-name">🔥 Transformers<br><small>(BERT, PhoBERT)</small></td>
+                        <td>
+                            <strong>transformers</strong><br>
+                            <code>torch</code><br>
+                            <code>tensorflow</code>
+                        </td>
+                        <td><span class="difficulty medium">Trung bình</span></td>
+                        <td><span class="performance high">Cao nhất</span></td>
+                        <td class="pros">
+                            • SOTA accuracy<br>
+                            • Pre-trained sẵn<br>
+                            • Hỗ trợ tiếng Việt<br>
+                            • Transfer learning
+                        </td>
+                        <td class="cons">
+                            • Cần GPU mạnh<br>
+                            • Training chậm<br>
+                            • Model size lớn<br>
+                            • Phức tạp
+                        </td>
+                        <td>
+                            Production<br>
+                            High accuracy<br>
+                            Tiếng Việt
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="method-name">📊 Classical ML<br><small>(SVM, Random Forest)</small></td>
+                        <td>
+                            <strong>scikit-learn</strong><br>
+                            <code>pandas</code><br>
+                            <code>numpy</code>
+                        </td>
+                        <td><span class="difficulty easy">Dễ</span></td>
+                        <td><span class="performance medium-perf">Trung bình</span></td>
+                        <td class="pros">
+                            • Dễ hiểu & implement<br>
+                            • Training nhanh<br>
+                            • Ít tài nguyên<br>
+                            • Explainable AI
+                        </td>
+                        <td class="cons">
+                            • Cần feature engineering<br>
+                            • Accuracy thấp hơn<br>
+                            • Khó xử lý context<br>
+                            • Manual preprocessing
+                        </td>
+                        <td>
+                            Baseline<br>
+                            Quick prototype<br>
+                            Ít dữ liệu
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="method-name">🧠 Deep Learning<br><small>(LSTM, CNN)</small></td>
+                        <td>
+                            <strong>tensorflow</strong><br>
+                            <strong>pytorch</strong><br>
+                            <code>keras</code>
+                        </td>
+                        <td><span class="difficulty medium">Trung bình</span></td>
+                        <td><span class="performance medium-perf">Tốt</span></td>
+                        <td class="pros">
+                            • Tốt cho sequence<br>
+                            • Custom architecture<br>
+                            • Xử lý được context<br>
+                            • Flexible
+                        </td>
+                        <td class="cons">
+                            • Cần nhiều dữ liệu<br>
+                            • Training lâu<br>
+                            • Hyperparameter tuning<br>
+                            • Overfitting dễ
+                        </td>
+                        <td>
+                            Custom domain<br>
+                            Medium dataset<br>
+                            Sequence data
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="method-name">📈 Gradient Boosting<br><small>(XGBoost, LightGBM)</small></td>
+                        <td>
+                            <strong>xgboost</strong><br>
+                            <strong>lightgbm</strong><br>
+                            <code>catboost</code>
+                        </td>
+                        <td><span class="difficulty easy">Dễ</span></td>
+                        <td><span class="performance medium-perf">Tốt</span></td>
+                        <td class="pros">
+                            • Hiệu suất cao<br>
+                            • Ít preprocessing<br>
+                            • Handle missing data<br>
+                            • Fast inference
+                        </td>
+                        <td class="cons">
+                            • Cần feature engineering<br>
+                            • Overfitting<br>
+                            • Khó với text raw<br>
+                            • Tabular data tốt hơn
+                        </td>
+                        <td>
+                            Tabular + text<br>
+                            Competition<br>
+                            Mixed features
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="method-name">🔤 Word Embeddings<br><small>(Word2Vec, FastText)</small></td>
+                        <td>
+                            <strong>gensim</strong><br>
+                            <code>fasttext</code><br>
+                            <code>spacy</code>
+                        </td>
+                        <td><span class="difficulty easy">Dễ</span></td>
+                        <td><span class="performance medium-perf">Tốt</span></td>
+                        <td class="pros">
+                            • Semantic similarity<br>
+                            • Pre-trained available<br>
+                            • Lightweight<br>
+                            • Good baseline
+                        </td>
+                        <td class="cons">
+                            • Mất context<br>
+                            • Fixed vocabulary<br>
+                            • OOV problems<br>
+                            • Cần aggregate
+                        </td>
+                        <td>
+                            Similarity search<br>
+                            Feature extraction<br>
+                            Clustering
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="method-name">🏷️ Lexicon-based<br><small>(VADER, TextBlob)</small></td>
+                        <td>
+                            <strong>vaderSentiment</strong><br>
+                            <strong>textblob</strong><br>
+                            <code>afinn</code>
+                        </td>
+                        <td><span class="difficulty easy">Rất dễ</span></td>
+                        <td><span class="performance low">Thấp</span></td>
+                        <td class="pros">
+                            • Không cần training<br>
+                            • Real-time<br>
+                            • Explainable<br>
+                            • No data required
+                        </td>
+                        <td class="cons">
+                            • Rule-based limitation<br>
+                            • Domain specific<br>
+                            • Ít support tiếng Việt<br>
+                            • Static rules
+                        </td>
+                        <td>
+                            Quick analysis<br>
+                            No training data<br>
+                            General sentiment
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="method-name">🦜 Large Language Models<br><small>(GPT, Claude)</small></td>
+                        <td>
+                            <strong>openai</strong><br>
+                            <strong>anthropic</strong><br>
+                            <code>langchain</code>
+                        </td>
+                        <td><span class="difficulty easy">Dễ (API)</span></td>
+                        <td><span class="performance high">Rất cao</span></td>
+                        <td class="pros">
+                            • Zero-shot learning<br>
+                            • Hiệu suất xuất sắc<br>
+                            • Flexible prompting<br>
+                            • Multi-task
+                        </td>
+                        <td class="cons">
+                            • Chi phí cao<br>
+                            • API dependency<br>
+                            • Data privacy<br>
+                            • Rate limiting
+                        </td>
+                        <td>
+                            Prototype<br>
+                            Complex tasks<br>
+                            Multi-lingual
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="method-name">🔧 Ensemble Methods<br><small>(Voting, Stacking)</small></td>
+                        <td>
+                            <strong>scikit-learn</strong><br>
+                            <code>mlxtend</code><br>
+                            Custom code
+                        </td>
+                        <td><span class="difficulty medium">Trung bình</span></td>
+                        <td><span class="performance high">Cao</span></td>
+                        <td class="pros">
+                            • Kết hợp ưu điểm<br>
+                            • Robust predictions<br>
+                            • Reduce overfitting<br>
+                            • SOTA performance
+                        </td>
+                        <td class="cons">
+                            • Phức tạp<br>
+                            • Training nhiều model<br>
+                            • Inference chậm<br>
+                            • Hard to interpret
+                        </td>
+                        <td>
+                            Competition<br>
+                            Critical applications<br>
+                            Maximum accuracy
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="note">
+            <strong>💡 Lựa chọn phương pháp:</strong><br>
+            • <span class="highlight">Transformers</span>: Khi cần accuracy cao nhất, có GPU, production<br>
+            • <span class="highlight">Classical ML</span>: Prototype nhanh, ít dữ liệu, explainable<br>
+            • <span class="highlight">LLMs</span>: Prototype nhanh, zero-shot, budget không hạn chế<br>
+            • <span class="highlight">Ensemble</span>: Competition, critical applications
+        </div>
+
+        <div class="code-example">
+<strong>Quick Start Examples:</strong>
+
+# 1. Transformers (Current approach)
+from transformers import pipeline
+classifier = pipeline("text-classification", model="vinai/phobert-base")
+
+# 2. Classical ML
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.svm import SVC
+vectorizer = TfidfVectorizer()
+model = SVC()
+
+# 3. LLM (OpenAI)
+import openai
+response = openai.ChatCompletion.create(
+    model="gpt-3.5-turbo",
+    messages=[{"role": "user", "content": "Classify sentiment: ..."}]
+)
+
+# 4. Gradient Boosting
+import xgboost as xgb
+model = xgb.XGBClassifier()
+        </div>
+    </div>
+</body>
+</html>
