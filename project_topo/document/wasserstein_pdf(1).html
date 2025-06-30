@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khoảng cách Wasserstein - Giải thích và Ví dụ</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+        
+        body {
+            font-family: 'Times New Roman', serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+        }
+        
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #2c3e50;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 16px;
+            font-style: italic;
+        }
+        
+        h2 {
+            color: #34495e;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        
+        h3 {
+            color: #2c3e50;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+        
+        .formula {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .example-box {
+            background: #e8f5e8;
+            border: 1px solid #27ae60;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .matrix {
+            text-align: center;
+            margin: 15px 0;
+        }
+        
+        table {
+            border-collapse: collapse;
+            margin: 15px auto;
+            background: white;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        
+        .step {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .result {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+        
+        .download-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .download-btn:hover {
+            background: #2980b9;
+        }
+        
+        @media print {
+            .download-btn {
+                display: none;
+            }
+            
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            
+            .page-break {
+                page-break-before: always;
+            }
+        }
+        
+        .author-info {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #bdc3c7;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <button class="download-btn" onclick="downloadPDF()">📄 Tải PDF</button>
+    
+    <div class="header">
+        <h1>Khoảng cách Wasserstein</h1>
+        <div class="subtitle">Giải thích chi tiết và ví dụ minh họa</div>
+        <div class="subtitle">Dành cho IT Professional</div>
+    </div>
+
+    <h2>1. Giới thiệu tổng quan</h2>
+    
+    <p><strong>Khoảng cách Wasserstein</strong> (còn gọi là khoảng cách Kantorovich-Rubinstein hoặc Earth Mover's Distance) là một thước đo khoảng cách giữa hai phân phối xác suất, dựa trên ý tưởng "di chuyển" khối lượng từ một phân phối này sang phân phối kia với chi phí tối thiểu.</p>
+
+    <div class="formula">
+        <strong>Công thức Wasserstein bậc 1:</strong><br><br>
+        W₁(μ, ν) = min[γ∈Π(μ,ν)] ∫∫ ||x - y|| dγ(x, y)
+    </div>
+
+    <p><strong>Trong đó:</strong></p>
+    <ul>
+        <li><strong>μ, ν</strong>: Hai phân phối xác suất (như hai đống cát)</li>
+        <li><strong>Π(μ, ν)</strong>: Tập hợp các phân phối kết hợp γ có phân phối biên (marginals) là μ và ν</li>
+        <li><strong>||x - y||</strong>: Khoảng cách giữa hai điểm x và y</li>
+        <li><strong>γ</strong>: Kế hoạch vận chuyển, xác định cách chuyển khối lượng từ μ sang ν</li>
+    </ul>
+
+    <h2>2. Khái niệm Marginals</h2>
+    
+    <p>Từ tài liệu gốc, khái niệm <strong>"measure on ℳ × ℳ with marginals μ and ν"</strong> ám chỉ:</p>
+    
+    <ul>
+        <li><strong>γ</strong> là phân phối kết hợp trong không gian ℳ × ℳ</li>
+        <li><strong>μ và ν</strong> là các phân phối biên của γ</li>
+        <li>Nói cách khác, γ là cách "ghép cặp" giữa μ và ν để di chuyển khối lượng</li>
+    </ul>
+
+    <div class="page-break"></div>
+    
+    <h2>3. Ví dụ minh họa cụ thể</h2>
+    
+    <div class="example-box">
+        <h3>🏪 Bài toán vận chuyển cát</h3>
+        <p>Tưởng tượng bạn có hai cửa hàng bán cát và hai khách hàng cần cát. Cần vận chuyển cát từ các cửa hàng đến khách hàng sao cho chi phí nhỏ nhất.</p>
+    </div>
+
+    <h3>Dữ liệu đầu vào:</h3>
+    
+    <table>
+        <tr>
+            <th colspan="2">Cửa hàng (phân phối μ)</th>
+        </tr>
+        <tr>
+            <td>Cửa hàng 1 (vị trí x₁ = 0)</td>
+            <td>4kg cát</td>
+        </tr>
+        <tr>
+            <td>Cửa hàng 2 (vị trí x₂ = 3)</td>
+            <td>6kg cát</td>
+        </tr>
+        <tr>
+            <td><strong>Tổng</strong></td>
+            <td><strong>10kg cát</strong></td>
+        </tr>
+    </table>
+
+    <table>
+        <tr>
+            <th colspan="2">Khách hàng (phân phối ν)</th>
+        </tr>
+        <tr>
+            <td>Khách hàng 1 (vị trí y₁ = 1)</td>
+            <td>Cần 7kg cát</td>
+        </tr>
+        <tr>
+            <td>Khách hàng 2 (vị trí y₂ = 5)</td>
+            <td>Cần 3kg cát</td>
+        </tr>
+        <tr>
+            <td><strong>Tổng</strong></td>
+            <td><strong>10kg cát</strong></td>
+        </tr>
+    </table>
+
+    <div class="step">
+        <h3>Bước 1: Tính ma trận khoảng cách</h3>
+        <p>Khoảng cách giữa các cửa hàng và khách hàng:</p>
+        
+        <table>
+            <tr>
+                <th></th>
+                <th>y₁ (vị trí 1)</th>
+                <th>y₂ (vị trí 5)</th>
+            </tr>
+            <tr>
+                <th>x₁ (vị trí 0)</th>
+                <td>|0-1| = 1</td>
+                <td>|0-5| = 5</td>
+            </tr>
+            <tr>
+                <th>x₂ (vị trí 3)</th>
+                <td>|3-1| = 2</td>
+                <td>|3-5| = 2</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="step">
+        <h3>Bước 2: Xây dựng ma trận vận chuyển γ</h3>
+        <p>γᵢⱼ = lượng cát chuyển từ cửa hàng xᵢ đến khách hàng yⱼ</p>
+        
+        <table>
+            <tr>
+                <th></th>
+                <th>y₁ (7kg)</th>
+                <th>y₂ (3kg)</th>
+                <th>Tổng xuất</th>
+            </tr>
+            <tr>
+                <th>x₁ (4kg)</th>
+                <td>γ₁₁</td>
+                <td>γ₁₂</td>
+                <td>4kg</td>
+            </tr>
+            <tr>
+                <th>x₂ (6kg)</th>
+                <td>γ₂₁</td>
+                <td>γ₂₂</td>
+                <td>6kg</td>
+            </tr>
+            <tr>
+                <th>Tổng nhập</th>
+                <td>7kg</td>
+                <td>3kg</td>
+                <td>10kg</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="step">
+        <h3>Bước 3: Ràng buộc Marginals</h3>
+        <ul>
+            <li>Từ cửa hàng 1: γ₁₁ + γ₁₂ = 4</li>
+            <li>Từ cửa hàng 2: γ₂₁ + γ₂₂ = 6</li>
+            <li>Đến khách hàng 1: γ₁₁ + γ₂₁ = 7</li>
+            <li>Đến khách hàng 2: γ₁₂ + γ₂₂ = 3</li>
+        </ul>
+        
+        <div class="formula">
+            <strong>Hàm mục tiêu (cần tối thiểu hóa):</strong><br>
+            Chi phí = γ₁₁×1 + γ₁₂×5 + γ₂₁×2 + γ₂₂×2
+        </div>
+    </div>
+
+    <div class="page-break"></div>
+
+    <div class="step">
+        <h3>Bước 4: Tìm kế hoạch tối ưu</h3>
+        
+        <h4>🔵 Kế hoạch 1:</h4>
+        <table>
+            <tr>
+                <th></th>
+                <th>y₁ (1)</th>
+                <th>y₂ (5)</th>
+            </tr>
+            <tr>
+                <th>x₁ (0)</th>
+                <td>4kg</td>
+                <td>0kg</td>
+            </tr>
+            <tr>
+                <th>x₂ (3)</th>
+                <td>3kg</td>
+                <td>3kg</td>
+            </tr>
+        </table>
+        
+        <p><strong>Tính chi phí:</strong></p>
+        <p>Chi phí = (4×1) + (0×5) + (3×2) + (3×2) = 4 + 0 + 6 + 6 = <strong>16</strong></p>
+        
+        <h4>🔴 Kế hoạch 2 (để so sánh):</h4>
+        <table>
+            <tr>
+                <th></th>
+                <th>y₁ (1)</th>
+                <th>y₂ (5)</th>
+            </tr>
+            <tr>
+                <th>x₁ (0)</th>
+                <td>2kg</td>
+                <td>2kg</td>
+            </tr>
+            <tr>
+                <th>x₂ (3)</th>
+                <td>5kg</td>
+                <td>1kg</td>
+            </tr>
+        </table>
+        
+        <p><strong>Tính chi phí:</strong></p>
+        <p>Chi phí = (2×1) + (2×5) + (5×2) + (1×2) = 2 + 10 + 10 + 2 = <strong>24</strong></p>
+    </div>
+
+    <div class="result">
+        <h3>🎯 Kết quả</h3>
+        <p><strong>Khoảng cách Wasserstein W₁(μ, ν) = 16</strong></p>
+        <p>Đây là chi phí tối thiểu để vận chuyển cát từ phân phối μ sang phân phối ν.</p>
+    </div>
+
+    <h2>4. Hình dung trực quan</h2>
+    
+    <p>Trên đường thẳng số:</p>
+    <ul>
+        <li><strong>Vị trí 0:</strong> 4kg cát → <strong>Vị trí 1:</strong> 4kg (chi phí: 4×1 = 4)</li>
+        <li><strong>Vị trí 3:</strong> 3kg cát → <strong>Vị trí 1:</strong> 3kg (chi phí: 3×2 = 6)</li>
+        <li><strong>Vị trí 3:</strong> 3kg cát → <strong>Vị trí 5:</strong> 3kg (chi phí: 3×2 = 6)</li>
+    </ul>
+    
+    <div class="formula">
+        Tổng chi phí tối thiểu = 4 + 6 + 6 = 16
+    </div>
+
+    <h2>5. Ý nghĩa và ứng dụng</h2>
+    
+    <p>Khoảng cách Wasserstein đo lường mức độ khác biệt giữa hai phân phối bằng cách tính chi phí tối thiểu để "chuyển đổi" từ phân phối này sang phân phối kia.</p>
+    
+    <h3>Ứng dụng thực tế:</h3>
+    <ul>
+        <li><strong>Machine Learning:</strong> So sánh phân phối dữ liệu trong GANs</li>
+        <li><strong>Computer Vision:</strong> So sánh histogram màu sắc trong xử lý ảnh</li>
+        <li><strong>Logistics:</strong> Tối ưu hóa vận chuyển hàng hóa</li>
+        <li><strong>Finance:</strong> Đo rủi ro trong portfolio optimization</li>
+        <li><strong>Natural Language Processing:</strong> So sánh phân phối từ vựng</li>
+    </ul>
+
+    <h2>6. Ứng dụng thực tế: Phân tích sentiment với Wasserstein</h2>
+    
+    <div class="example-box">
+        <h3>🎯 Mục tiêu</h3>
+        <p>Sử dụng khoảng cách Wasserstein để chọn ra những bình luận có đặc trưng khác biệt nhất cho việc tăng cường dữ liệu (data augmentation) trong phân tích sentiment.</p>
+    </div>
+
+    <h3>Code Implementation:</h3>
+    
+    <div class="formula" style="text-align: left; font-family: 'Courier New', monospace; font-size: 11px; background: #1e1e1e; color: #d4d4d4; padding: 20px;">
+<span style="color: #c586c0;">import</span> <span style="color: #9cdcfe;">numpy</span> <span style="color: #c586c0;">as</span> <span style="color: #9cdcfe;">np</span><br>
+<span style="color: #c586c0;">from</span> <span style="color: #9cdcfe;">sentence_transformers</span> <span style="color: #c586c0;">import</span> <span style="color: #9cdcfe;">SentenceTransformer</span><br>
+<span style="color: #c586c0;">from</span> <span style="color: #9cdcfe;">ripser</span> <span style="color: #c586c0;">import</span> <span style="color: #9cdcfe;">ripser</span><br>
+<span style="color: #c586c0;">from</span> <span style="color: #9cdcfe;">persim</span> <span style="color: #c586c0;">import</span> <span style="color: #9cdcfe;">wasserstein</span><br>
+<span style="color: #c586c0;">from</span> <span style="color: #9cdcfe;">sklearn.preprocessing</span> <span style="color: #c586c0;">import</span> <span style="color: #9cdcfe;">StandardScaler</span><br><br>
+
+<span style="color: #6a9955;"># Dữ liệu mẫu</span><br>
+<span style="color: #9cdcfe;">texts</span> = [<span style="color: #ce9178;">"Sản phẩm tuyệt vời!"</span>, <span style="color: #ce9178;">"Dịch vụ tệ!"</span>, <span style="color: #ce9178;">"Món ăn ngon, phục vụ chậm."</span>]<br><br>
+
+<span style="color: #6a9955;"># Load model embedding đa ngôn ngữ</span><br>
+<span style="color: #9cdcfe;">model</span> = <span style="color: #dcdcaa;">SentenceTransformer</span>(<span style="color: #ce9178;">'distiluse-base-multilingual-cased-v2'</span>)<br>
+<span style="color: #9cdcfe;">embeddings</span> = <span style="color: #9cdcfe;">model</span>.<span style="color: #dcdcaa;">encode</span>(<span style="color: #9cdcfe;">texts</span>)<br><br>
+
+<span style="color: #6a9955;"># Chuẩn hóa dữ liệu</span><br>
+<span style="color: #9cdcfe;">scaler</span> = <span style="color: #dcdcaa;">StandardScaler</span>()<br>
+<span style="color: #9cdcfe;">embeddings_scaled</span> = <span style="color: #9cdcfe;">scaler</span>.<span style="color: #dcdcaa;">fit_transform</span>(<span style="color: #9cdcfe;">embeddings</span>)<br><br>
+
+<span style="color: #6a9955;"># Tính persistence diagrams</span><br>
+<span style="color: #9cdcfe;">diagrams</span> = <span style="color: #dcdcaa;">ripser</span>(<span style="color: #9cdcfe;">embeddings_scaled</span>, <span style="color: #9cdcfe;">maxdim</span>=<span style="color: #b5cea8;">1</span>)[<span style="color: #ce9178;">'dgms'</span>][<span style="color: #b5cea8;">1</span>]<br>
+<span style="color: #9cdcfe;">diagrams</span> = <span style="color: #9cdcfe;">diagrams</span>[<span style="color: #9cdcfe;">diagrams</span>[:, <span style="color: #b5cea8;">1</span>] != <span style="color: #9cdcfe;">np</span>.<span style="color: #9cdcfe;">inf</span>]<br><br>
+
+<span style="color: #6a9955;"># Tính Wasserstein distance</span><br>
+<span style="color: #9cdcfe;">distances</span> = []<br>
+<span style="color: #c586c0;">for</span> <span style="color: #9cdcfe;">i</span> <span style="color: #c586c0;">in</span> <span style="color: #dcdcaa;">range</span>(<span style="color: #dcdcaa;">len</span>(<span style="color: #9cdcfe;">texts</span>)):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #c586c0;">for</span> <span style="color: #9cdcfe;">j</span> <span style="color: #c586c0;">in</span> <span style="color: #dcdcaa;">range</span>(<span style="color: #9cdcfe;">i</span> + <span style="color: #b5cea8;">1</span>, <span style="color: #dcdcaa;">len</span>(<span style="color: #9cdcfe;">texts</span>)):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #9cdcfe;">dist</span> = <span style="color: #dcdcaa;">wasserstein</span>(<span style="color: #9cdcfe;">diagrams</span>, <span style="color: #9cdcfe;">diagrams</span>, <span style="color: #9cdcfe;">i</span>, <span style="color: #9cdcfe;">j</span>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #9cdcfe;">distances</span>.<span style="color: #dcdcaa;">append</span>((<span style="color: #9cdcfe;">i</span>, <span style="color: #9cdcfe;">j</span>, <span style="color: #9cdcfe;">dist</span>))<br><br>
+
+<span style="color: #6a9955;"># Chọn bình luận có khoảng cách lớn</span><br>
+<span style="color: #9cdcfe;">threshold</span> = <span style="color: #b5cea8;">0.5</span><br>
+<span style="color: #9cdcfe;">selected_indices</span> = [<span style="color: #9cdcfe;">i</span> <span style="color: #c586c0;">for</span> <span style="color: #9cdcfe;">i</span>, <span style="color: #9cdcfe;">j</span>, <span style="color: #9cdcfe;">dist</span> <span style="color: #c586c0;">in</span> <span style="color: #9cdcfe;">distances</span> <span style="color: #c586c0;">if</span> <span style="color: #9cdcfe;">dist</span> > <span style="color: #9cdcfe;">threshold</span>]<br><br>
+
+<span style="color: #dcdcaa;">print</span>(<span style="color: #ce9178;">"Bình luận được chọn để tăng cường:"</span>)<br>
+<span style="color: #c586c0;">for</span> <span style="color: #9cdcfe;">idx</span> <span style="color: #c586c0;">in</span> <span style="color: #dcdcaa;">set</span>(<span style="color: #9cdcfe;">selected_indices</span>):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #dcdcaa;">print</span>(<span style="color: #ce9178;">f"- {texts[idx]}"</span>)
+    </div>
+
+    <h3>📖 Giải thích chi tiết từng bước:</h3>
+
+    <div class="step">
+        <h4>🔸 Bước 1: Import Libraries</h4>
+        <ul>
+            <li><strong>sentence_transformers:</strong> Chuyển đổi text thành vector embedding</li>
+            <li><strong>ripser:</strong> Tính toán Persistent Homology</li>
+            <li><strong>persim:</strong> Tính khoảng cách Wasserstein giữa persistence diagrams</li>
+            <li><strong>sklearn.preprocessing:</strong> Chuẩn hóa dữ liệu</li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <h4>🔸 Bước 2: Tạo Embeddings</h4>
+        <p><strong>Mục đích:</strong> Chuyển đổi văn bản tiếng Việt thành vector số học</p>
+        <ul>
+            <li><strong>Model:</strong> 'distiluse-base-multilingual-cased-v2' - hỗ trợ tiếng Việt</li>
+            <li><strong>Kết quả:</strong> Mỗi câu → vector 512 chiều</li>
+            <li><strong>Ví dụ:</strong> "Sản phẩm tuyệt vời!" → [0.12, -0.34, 0.78, ...]</li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <h4>🔸 Bước 3: Chuẩn hóa dữ liệu</h4>
+        <p><strong>Lý do:</strong> Đảm bảo các chiều có cùng thang đo, tránh bias</p>
+        <div class="formula">
+            StandardScaler: (x - mean) / std
+        </div>
+        <p>Sau chuẩn hóa: mean = 0, std = 1 cho mỗi chiều</p>
+    </div>
+
+    <div class="step">
+        <h4>🔸 Bước 4: Tính Persistence Diagrams</h4>
+        <p><strong>Topological Data Analysis (TDA):</strong></p>
+        <ul>
+            <li><strong>ripser:</strong> Phân tích cấu trúc hình học của dữ liệu</li>
+            <li><strong>maxdim=1:</strong> Tính đến homology dimension 1 (cycles, loops)</li>
+            <li><strong>dgms[1]:</strong> Lấy 1-dimensional persistence diagram</li>
+            <li><strong>Ý nghĩa:</strong> Mỗi điểm (birth, death) trong diagram đại diện cho một "loop" trong dữ liệu</li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <h4>🔸 Bước 5: Tính Wasserstein Distance</h4>
+        <p><strong>So sánh cấu trúc topological:</strong></p>
+        <ul>
+            <li><strong>wasserstein(diagrams, diagrams, i, j):</strong> So sánh persistence diagram của câu i và j</li>
+            <li><strong>Khoảng cách lớn:</strong> Cấu trúc semantic khác biệt nhiều</li>
+            <li><strong>Khoảng cách nhỏ:</strong> Ý nghĩa tương tự nhau</li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <h4>🔸 Bước 6: Lọc và chọn mẫu</h4>
+        <p><strong>Chiến lược Data Augmentation:</strong></p>
+        <ul>
+            <li><strong>threshold = 0.5:</strong> Ngưỡng để xác định "khác biệt đáng kể"</li>
+            <li><strong>Mục đích:</strong> Chọn những mẫu đa dạng nhất để tăng cường dataset</li>
+            <li><strong>Ứng dụng:</strong> Cải thiện độ robust của model phân tích sentiment</li>
+        </ul>
+    </div>
+
+    <h3>🎯 Ưu điểm của phương pháp này:</h3>
+    <div class="result">
+        <ul>
+            <li><strong>Khách quan:</strong> Dựa trên cấu trúc toán học, không phụ thuộc vào domain knowledge</li>
+            <li><strong>Đa chiều:</strong> Xét toàn bộ không gian semantic, không chỉ distance đơn giản</li>
+            <li><strong>Robust:</strong> Tận dụng persistent homology để bắt được pattern phức tạp</li>
+            <li><strong>Thực tế:</strong> Có thể áp dụng cho mọi loại text classification task</li>
+        </ul>
+    </div>
+
+    <div class="author-info">
+        <p><strong>Tài liệu được biên soạn cho IT Professional</strong></p>
+        <p>Ngày tạo: Tháng 7, 2025</p>
+        <p>Định dạng: PDF Ready</p>
+    </div>
+
+    <script>
+        function downloadPDF() {
+            // Ẩn nút download trước khi in
+            document.querySelector('.download-btn').style.display = 'none';
+            
+            // Trigger print dialog
+            window.print();
+            
+            // Hiện lại nút sau khi in
+            setTimeout(() => {
+                document.querySelector('.download-btn').style.display = 'block';
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
